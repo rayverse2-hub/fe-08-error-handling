@@ -70,48 +70,36 @@ const { messages, sendMessage, status } = useChat({
               📋 Processing lead information...
             </div>
           );
+       case "output-available": {
+  const output = part.output as any;
 
-        case "output-available":
-          return (
-            <div
-              key={index}
-              className="mt-2 rounded-lg border bg-green-50 p-4"
-            >
-              <h3 className="font-bold">
-                📊 Lead Score
-              </h3>
+  return (
+    <div
+      key={index}
+      className="mt-2 rounded-lg border bg-green-50 p-4"
+    >
+      <h3 className="font-bold">📊 Lead Score</h3>
 
-              <p>
-                <strong>Company:</strong>{" "}
-                {part.output.company}
-              </p>
+      <p><strong>Company:</strong> {output.company}</p>
+      <p><strong>Score:</strong> {output.score}/100</p>
+      <p><strong>Priority:</strong> {output.priority}</p>
+      <p><strong>Reason:</strong> {output.reason}</p>
+    </div>
+  );
+}
 
-              <p>
-                <strong>Score:</strong>{" "}
-                {part.output.score}/100
-              </p>
+case "output-error":
+  return (
+    <div
+      key={index}
+      className="mt-2 rounded-lg bg-red-100 p-3 text-red-700"
+    >
+      ❌ Failed to score lead.
+    </div>
+  );
 
-              <p>
-                <strong>Priority:</strong>{" "}
-                {part.output.priority}
-              </p>
-
-              <p>
-                <strong>Reason:</strong>{" "}
-                {part.output.reason}
-              </p>
-            </div>
-          );
-
-        case "output-error":
-          return (
-            <div
-              key={index}
-              className="mt-2 rounded-lg bg-red-100 p-3 text-red-700"
-            >
-              ❌ Failed to score lead.
-            </div>
-          );
+        default:
+          return null;
       }
 
     default:
