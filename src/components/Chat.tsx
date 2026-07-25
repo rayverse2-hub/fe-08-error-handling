@@ -8,10 +8,12 @@ export default function Chat() {
   const [input, setInput] = useState("");
 
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      api: "/api/chat",
-    }),
-  });
+  transport: new DefaultChatTransport({
+    api: "/api/chat",
+  }),
+
+  maxSteps: 5,
+});
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
