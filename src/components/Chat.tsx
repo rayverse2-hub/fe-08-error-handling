@@ -7,13 +7,12 @@ import { DefaultChatTransport } from "ai";
 export default function Chat() {
   const [input, setInput] = useState("");
 
-  const { messages, sendMessage, status } = useChat({
+const { messages, sendMessage, status } = useChat({
   transport: new DefaultChatTransport({
     api: "/api/chat",
   }),
-
-  maxSteps: 5,
 });
+
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,11 +45,79 @@ export default function Chat() {
               {message.role === "user" ? "You" : "AI"}:
             </strong>{" "}
             {message.parts.map((part, index) => {
-              if (part.type === "text") {
-                return <span key={index}>{part.text}</span>;
-              }
-              return null;
-            })}
+  switch (part.type) {
+    case "text":
+      return <span key={index}>{part.text}</span>;
+
+    case "tool-leadScore":
+      switch (part.state) {
+        case "input-streaming":
+          return (
+            <div
+              key={index}
+              className="mt-2 rounded-lg bg-yellow-100 p-3"
+            >
+              ⏳ Scoring lead...
+            </div>
+          );
+
+        case "input-available":
+          return (
+            <div
+              key={index}
+              className="mt-2 rounded-lg bg-blue-100 p-3"
+            >
+              📋 Processing lead information...
+            </div>
+          );
+
+        case "output-available":
+          return (
+            <div
+              key={index}
+              className="mt-2 rounded-lg border bg-green-50 p-4"
+            >
+              <h3 className="font-bold">
+                📊 Lead Score
+              </h3>
+
+              <p>
+                <strong>Company:</strong>{" "}
+                {part.output.company}
+              </p>
+
+              <p>
+                <strong>Score:</strong>{" "}
+                {part.output.score}/100
+              </p>
+
+              <p>
+                <strong>Priority:</strong>{" "}
+                {part.output.priority}
+              </p>
+
+              <p>
+                <strong>Reason:</strong>{" "}
+                {part.output.reason}
+              </p>
+            </div>
+          );
+
+        case "output-error":
+          return (
+            <div
+              key={index}
+              className="mt-2 rounded-lg bg-red-100 p-3 text-red-700"
+            >
+              ❌ Failed to score lead.
+            </div>
+          );
+      }
+
+    default:
+      return null;
+  }
+})}
           </div>
         ))}
       </div>
